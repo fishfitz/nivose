@@ -5,6 +5,8 @@ module.exports = async function({email}) {
         email: email.toLowerCase()
     }).exec();
 
+    keystone.truthy({email});
+
     if (user) {
         throw new Error('Email already exist');
     }

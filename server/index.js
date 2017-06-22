@@ -1,11 +1,11 @@
 const keystone = require('keystone');
 const fs = require('fs');
-const config = require('./config');
+keystone.serverConfig = require('../config');
 
 process.chdir(__dirname);
 
 keystone.init({
-    name: config.NAME,
+    name: keystone.serverConfig.NAME,
     static: ['public'],
     'auto update': true,
     session: true,
@@ -14,10 +14,10 @@ keystone.init({
     'user model': 'User',
     'signin redirect': '/',
     'signout redirect': '/',
-    'cookie secret': config.COOKIE_SECRET,
-    mongo: config.MONGO,
-    port: config.PORT,
-    host: config.HOST
+    'cookie secret': keystone.serverConfig.COOKIE_SECRET,
+    mongo: keystone.serverConfig.MONGO,
+    port: keystone.serverConfig.PORT,
+    host: keystone.serverConfig.HOST
 });
 
 fs.readdirSync('./models').forEach(m => {

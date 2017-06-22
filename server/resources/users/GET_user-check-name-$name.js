@@ -6,6 +6,8 @@ module.exports = async function({name}) {
         slug: utils.slug(name)
     }).exec();
 
+    keystone.truthy({name});
+
     if (user) {
         throw new Error('Username already exist');
     }

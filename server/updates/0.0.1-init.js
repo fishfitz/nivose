@@ -1,12 +1,22 @@
-const keystone = require('keystone'),
-    User = keystone.list('User'),
-    config = require('../config.js');
+const keystone = require('keystone');
 
-exports = module.exports = function(done) {
-    new User.model({
-        name: config.ADMIN_NAME,
-        email: config.ADMIN_EMAIL,
-        password: config.ADMIN_PASSWORD,
-        canAccessKeystone: true
-    }).save(done);
+exports = module.exports = async function(done) {
+    try {
+        await (new (keystone.list('User')).model({
+            name: keystone.serverConfig.ADMIN_NAME,
+            email: keystone.serverConfig.ADMIN_EMAIL,
+            password: keystone.serverConfig.ADMIN_PASSWORD,
+            canAccessKeystone: true
+        })).save();
+
+        await (new (keystone.list('Config')).model({
+            name: 'Default',
+            isActive: true
+        })).save();
+
+        done();
+    }
+    catch (e) {
+        console.error(e);
+    }
 };

@@ -1,14 +1,12 @@
 const keystone = require('keystone');
 const checkMail = require('./GET_user-check-mail-$email');
-const checkUserName = require('GET_user-check-name-$name');
+const checkUserName = require('./GET_user-check-name-$name');
 
 module.exports = async function({userID, name, password, passwordConfirm, email, description}, user) {
-    if (!user) {
-        throw new Error('You must be sign in');
-    }
+    keystone.isAuth(user);
 
     if (user.slug !== userID && !user.canAccessKeystone) {
-        throw new Error('You don\'t have the right for that');
+        throw new Error('You don\'t have the right for that.');
     }
 
     const requestedUser = await keystone.request('User', userID);
@@ -24,14 +22,16 @@ module.exports = async function({userID, name, password, passwordConfirm, email,
     }
 
     if (password !== undefined) {
+        keystone.truthy({password});
+
         if (password !== passwordConfirm) {
-            throw new Error('Password do not match');
+            throw new Error('Password do not match.');
         }
         requestedUser.password = password;
     }
 
     if (description !== undefined) {
-        requestedUser.description = description;
+        requestedUser.description.md = description;
     }
 
     await requestedUser.save();

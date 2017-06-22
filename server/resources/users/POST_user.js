@@ -1,24 +1,31 @@
 const keystone = require('keystone');
 const checkMail = require('./GET_user-check-mail-$email');
-const checkUserName = require('GET_user-check-name-$name');
+const checkUserName = require('./GET_user-check-name-$name');
 
 module.exports = async function({name, password, passwordConfirm, email}, user) {
+    const {allowNewMemberSignUp} = await keystone.config();
+
+    if (!allowNewMemberSignUp) {
+        throw new Error('Inscriptions were closed by the owner');
+    }
+
     if (user) {
-        throw new Error('You are already logged in');
+        throw new Error('You are already logged in.');
     }
 
     if (password !== passwordConfirm) {
-        throw new Error('Password do not match');
+        throw new Error('Password do not match.');
     }
 
+    keystone.truthy({password});
     checkMail({email});
     checkUserName({name});
 
-    const createdUser = new keystone.list('User').model({
+    const createdUser = new (keystone.list('User')).model({
         name,
         email,
         password
-    }).save();
+    });
 
     await createdUser.save();
 
