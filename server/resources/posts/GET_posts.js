@@ -1,7 +1,8 @@
 const keystone = require('keystone');
 
-module.exports = async function({tagsToInclude, tagsToExclude, page, pageSize}) {
+module.exports = async function({tagsToInclude = [], tagsToExclude = [], page, pageSize}) {
     const {maxPageSize, maxRequestTags} = await keystone.config();
+    [tagsToInclude, tagsToExclude] = keystone.castToArray(tagsToInclude, tagsToExclude);
 
     if (!tagsToInclude.length) {
         throw new Error('At least one tag must be included.');
@@ -11,10 +12,10 @@ module.exports = async function({tagsToInclude, tagsToExclude, page, pageSize}) 
         throw new Error('No more than 15 search terms.');
     }
 
-    let includeIDs = await keystone.request('Tag', tagsToInclude);
+    let includeIDs = await keystone.findTags(tagsToInclude);
     includeIDs = includeIDs.map(tag => tag._id);
 
-    let excludeIDs = await keystone.request('Tag', tagsToExclude);
+    let excludeIDs = await keystone.findTags(tagsToExclude);
     excludeIDs = excludeIDs.map(tag => tag._id);
 
     const minedPage = Math.min(page, 1);

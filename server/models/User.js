@@ -12,8 +12,18 @@ User.add({
     canAccessKeystone: { type: Boolean, initial: false },
     posts: { type: Types.Relationship, ref: 'Post', many: true },
     favorites: { type: Types.Relationship, ref: 'Post', many: true },
-    description: { type: Types.Markdown },
-    registered_at: { type: Types.Date, readOnly: true }
+    description: { type: Types.Markdown, default: '' },
+    registered_at: { type: Types.Date, readOnly: true },
+    avatar: {
+        type: Types.File,
+        storage: new keystone.Storage({
+            adapter: keystone.Storage.Adapters.FS,
+            fs: {
+                path: 'upload/avatars',
+                publicPath: '/avatars/'
+            }
+        })
+    }
 });
 
 User.schema.pre('save', function(next) {

@@ -6,7 +6,7 @@ process.chdir(__dirname);
 
 keystone.init({
     name: keystone.serverConfig.NAME,
-    static: ['public'],
+    static: ['public', 'upload'],
     'auto update': true,
     session: true,
     'session store': 'mongo',

@@ -6,6 +6,7 @@ function format(item, overwrite) {
     return {
         ...item,
         __v: undefined,
+        password: undefined,
         ...overwrite
     };
 }

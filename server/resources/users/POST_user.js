@@ -1,5 +1,5 @@
 const keystone = require('keystone');
-const checkMail = require('./GET_user-check-mail-$email');
+const checkMail = require('./GET_user-check-email-$email');
 const checkUserName = require('./GET_user-check-name-$name');
 
 module.exports = async function({name, password, passwordConfirm, email}, user) {
@@ -18,8 +18,8 @@ module.exports = async function({name, password, passwordConfirm, email}, user) 
     }
 
     keystone.truthy({password});
-    checkMail({email});
-    checkUserName({name});
+    checkMail({email, shouldError: true});
+    checkUserName({name, shouldError: true});
 
     const createdUser = new (keystone.list('User')).model({
         name,
@@ -31,7 +31,6 @@ module.exports = async function({name, password, passwordConfirm, email}, user) 
 
     return keystone.format(createdUser, {
         _id: undefined,
-        password: undefined,
         canAccessKeystone: undefined,
         posts: 0,
         favorites: 0

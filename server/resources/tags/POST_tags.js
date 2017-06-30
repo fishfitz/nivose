@@ -3,7 +3,7 @@ const keystone = require('keystone');
 module.exports = async function({tags}, user) {
     keystone.isAuth(user);
 
-    const tagObjects = await keystone.request('Tag', tags.map(t => t.toLowerCase()), 'name');
+    const tagObjects = await keystone.findTags(tags);
     const tagNames = tagObjects.map(t => t.name);
 
     const tagsToCreate = tags.filter(t => tagNames.indexOf(t.toLowerCase()) === -1);

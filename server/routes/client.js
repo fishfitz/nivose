@@ -1,38 +1,50 @@
-const path = require('path'),
-    template = require('fs').readFileSync(path.join(__dirname, '../client/template.html'), 'utf-8'),
-    renderer = require('vue-server-renderer')
-        .createBundleRenderer(require('../client/bundle.json'), {
-            template,
-            basedir: path.join(__dirname, '../client'),
-            runInNewContext: true
-        });
+const keystone = require('keystone');
+const path = require('path');
+const fs = require('fs');
+const vueSSR = require('vue-server-renderer');
+const routes = ['/', '/user/:userID', '/search'];
 
-const routes = ['/', '/create', '/edit/:slug', '/election/:slug', '/election/:slug/:voteKey'];
+function createRenderer() {
+    return vueSSR.createBundleRenderer(require('../client/bundle.json'), {
+        template: fs.readFileSync('./client/template.html', 'utf-8'),
+        basedir: './client',
+        runInNewContext: false
+    });
+}
+
+const cachedRenderer = createRenderer();
+const getRenderer = process.env.NODE_ENV === 'development' ? () => {
+    delete require.cache[path.join(__dirname, '../client/bundle.json')];
+    return createRenderer();
+} : () => cachedRenderer;
+
+function stopListen(stream) {
+    stream.removeAllListeners('data')
+        .removeAllListeners('error')
+        .removeAllListeners('end');
+}
 
 module.exports = function(app) {
     app.get(routes, (req, res) => {
+        const renderer = getRenderer();
         const stream = renderer.renderToStream({
             url: req.originalUrl,
-            isAuth: !!req.user,
-            head: req.user ? '<script> window._AUTH = true; </script>' : ''
+            activeUser: req.user ? keystone.format(req.user, {
+                posts: req.user.posts.length,
+                favorites: req.user.favorites.length
+            }) : false
         });
 
-        stream.on('error', (err) => {
+        stream.on('error', err => {
             console.log(err);
-            stream.removeAllListeners('data')
-            .removeAllListeners('error')
-            .removeAllListeners('end');
+            stopListen(stream);
             res.end(String(err));
         });
 
-        stream.on('data', (chunk) => {
-            res.write(chunk);
-        });
+        stream.on('data', data => res.write(data));
 
         stream.on('end', () => {
-            stream.removeAllListeners('data')
-            .removeAllListeners('error')
-            .removeAllListeners('end');
+            stopListen(stream);
             res.end();
         });
     });
