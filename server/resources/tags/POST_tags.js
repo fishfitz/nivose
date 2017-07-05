@@ -2,7 +2,8 @@ const keystone = require('keystone');
 
 module.exports = async function({tags}, user) {
     keystone.isAuth(user);
-
+    
+    [tags] = keystone.castToArray(tags);
     const tagObjects = await keystone.findTags(tags);
     const tagNames = tagObjects.map(t => t.name);
 

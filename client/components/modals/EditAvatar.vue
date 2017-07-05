@@ -3,13 +3,9 @@
         <h1 slot="header" class="modal-card-title">
             Changer son avatar
         </h1>
-        <div>
-            <label>
-                Cliquer ou déposer une image ici
-                <input type="file" accept="image/*"
-                    @change="changeAvatar($event.target.files[0])">
-            </label>
-        </div>
+
+        <file-input :value="avatar" @input="changeAvatar"></file-input>
+
         <div slot="footer">
             <progress v-if="loading" class="progress" :value="progress" max="100">
                 {{ progress }}%
@@ -23,14 +19,17 @@
 
 <script>
     import Modal from './Modal.vue';
+    import FileInput from '../forms/FileInput.vue';
 
     export default {
         components: {
-            Modal
+            Modal,
+            FileInput
         },
         props: ['value'],
         data() {
             return {
+                avatar: null,
                 loading: false,
                 error: null,
                 progress: 0
@@ -40,6 +39,7 @@
             changeAvatar(file) {
                 if (Array.isArray(file)) file = file[0];
                 if (!file) return;
+                this.avatar = file;
                 const data = new window.FormData();
                 data.append('avatar', file);
                 this.loading = true;
@@ -59,31 +59,3 @@
         }
     };
 </script>
-
-<style lang="scss" scoped>
-    @import "../../styles/variables.scss";
-
-    label {
-        display: block;
-        height: 150px;
-        line-height: 150px;
-        margin-top: 20px;
-        margin-bottom: 20px;
-        color: $grey-light;
-        border: 1px dashed $grey-light;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: border-color $speed $easing, color $speed $easing;
-
-        &:hover {
-            color: $grey-dark;
-            border-color: $grey-dark;
-        }
-    }
-
-    input {
-        position: absolute;
-        width: 0;
-        visibility: hidden;
-    }
-</style>

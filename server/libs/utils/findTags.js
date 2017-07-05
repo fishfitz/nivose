@@ -1,13 +1,13 @@
 const keystone = require('keystone');
 
-module.exports = function(tagNames) {
+module.exports = function(tagNames, limit) {
     let formattedTags = tagNames.map(t => {
         if (typeof t === 'string') {
             return t.toLowerCase();
         }
         return t;
     });
-    return keystone.list('Tag').model.find({
+    let request = keystone.list('Tag').model.find({
         $or: [{
             name: {
                 $in: formattedTags
@@ -18,5 +18,9 @@ module.exports = function(tagNames) {
                 $in: formattedTags
             }
         }]
-    }).exec();
+    });
+    if (limit) {
+        request.limit(limit);
+    }
+    return request.exec();
 };

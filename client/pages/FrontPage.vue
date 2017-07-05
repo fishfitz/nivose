@@ -1,5 +1,11 @@
 <template>
     <div>
+        <div v-if="isAuth" class="add-button container has-text-centered">
+            <router-link to="/post" class="button is-primary is-large">
+                Ajouter une image
+            </router-link>
+        </div>
+
         <section class="hero is-medium is-bold is-light">
             <div class="hero-body">
                 <div class="container">
@@ -12,33 +18,26 @@
                 </div>
             </div>
         </section>
-        <!--
-        <tag-input :fetchSuggestions="fetchSuggestions"></tag-input>
-    -->
     </div>
 </template>
-<!--
+
 <script>
-    import TagInput from '../components/forms/TagInput.vue';
-    import api from '../api/';
 
     export default {
-        components: {
-            TagInput
-        },
         computed: {
+            isAuth() {
+                return this.$store.state.auth.isAuth;
+            },
             activeUser() {
                 return this.$store.state.auth.activeUser;
-            }
-        },
-        methods: {
-            fetchSuggestions(input) {
-                return api({
-                    path: 'GET_tags-suggestion-$input',
-                    params: { input }
-                });
             }
         }
     };
 </script>
--->
+
+<style lang="scss" scoped>
+    .add-button {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>

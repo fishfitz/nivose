@@ -10,8 +10,6 @@ module.exports = async function({name, password}, _, {req, res}) {
     await keystone.cbToPromiseNoErr(keystone.session.signinWithUser, user, req, res);
     await keystone.cbToPromise(keystone.callHook.bind(keystone), user, 'post:signin');
     return keystone.format(user, {
-        _id: undefined,
-        canAccessKeystone: undefined,
         posts: user.posts.length,
         favorites: user.favorites.length
     });

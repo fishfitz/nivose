@@ -9,10 +9,7 @@ export default {
     mutations: {
         SET_ACTIVE_USER(state, user) {
             state.isAuth = true;
-            const avatar = user.avatar.filename;
-            state.activeUser = Object.assign({}, user, {
-                avatar: avatar ? `/avatars/${avatar}` : 'http://bulma.io/images/jgthms.png'
-            });
+            state.activeUser = user;
         },
         REMOVE_ACTIVE_USER(state) {
             state.isAuth = false;

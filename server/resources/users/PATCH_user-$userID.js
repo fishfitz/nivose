@@ -4,12 +4,12 @@ const checkMail = require('./GET_user-check-email-$email');
 const checkUserName = require('./GET_user-check-name-$name');
 
 module.exports = async function({userID, name, password, passwordConfirm, email, description, avatar}, user) {
-    // keystone.isAuth(user);
-/*
+    keystone.isAuth(user);
+
     if (user.slug !== userID && !user.canAccessKeystone) {
         throw new Error('You don\'t have the right for that.');
     }
-*/
+
     const requestedUser = await keystone.request('User', userID);
 
     if (email !== undefined) {
@@ -45,8 +45,6 @@ module.exports = async function({userID, name, password, passwordConfirm, email,
     const updatedUser = await requestedUser.save();
 
     return keystone.format(updatedUser, {
-        _id: undefined,
-        canAccessKeystone: undefined,
         posts: requestedUser.posts.length,
         favorites: requestedUser.favorites.length
     });

@@ -2,7 +2,7 @@ const keystone = require('keystone');
 const path = require('path');
 const fs = require('fs');
 const vueSSR = require('vue-server-renderer');
-const routes = ['/', '/user/:userID', '/search'];
+const routes = ['/', '/user/:userID', '/search', '/post', '/tag/:tag/:page?'];
 
 function createRenderer() {
     return vueSSR.createBundleRenderer(require('../client/bundle.json'), {

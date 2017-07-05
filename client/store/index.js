@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 import auth from './auth';
 import config from './config';
 import users from './users';
+import posts from './posts';
 
 Vue.use(Vuex);
 
@@ -12,7 +13,8 @@ export default function() {
         modules: {
             auth,
             config,
-            users
+            users,
+            posts
         }
     });
 }

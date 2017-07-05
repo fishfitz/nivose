@@ -19,7 +19,7 @@ Post.add({
         storage: new keystone.Storage({
             adapter: keystone.Storage.Adapters.FS,
             fs: {
-                path: '/public/images',
+                path: 'public/images',
                 publicPath: '/images/'
             }
         })

@@ -9,17 +9,24 @@ export default (activeUserSlug) => {
         routes: [
             {
                 path: '/',
-                component: require('./pages/FrontPage.vue'),
-                props: { activeUserSlug }
+                component: require('./pages/FrontPage.vue')
+                // resolve => require(['./pages/FrontPage.vue'], resolve)
             },
             {
                 path: '/user/:userID',
-                component: require('./pages/User.vue'),
-                props: true
+                component: require('./pages/User.vue')
             },
             {
-                path: '/search/',
+                path: '/search',
                 component: require('./pages/Search.vue')
+            },
+            {
+                path: '/post',
+                component: require('./pages/Post.vue')
+            },
+            {
+                path: '/tag/:tagID',
+                component: require('./pages/Tag.vue')
             }
         ]
     });

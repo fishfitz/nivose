@@ -76,8 +76,10 @@
 </script>
 
 <style lang="scss" scoped>
+    @import "../../styles/variables.scss";
+
     img {
-        border-radius: 4px;
+        border-radius: $radius;
         display: inline-block;
         vertical-align: top;
         margin-right: 6px;

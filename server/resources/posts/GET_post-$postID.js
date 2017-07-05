@@ -11,7 +11,7 @@ module.exports = async function({postID}) {
     const comments = await keystone.request('Commentary', requestedPost.comments, {
         path: '_id',
         populate: {
-            author: 'slug name'
+            author: 'slug name avatar'
         }
     });
 

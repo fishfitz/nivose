@@ -5,10 +5,12 @@
         </li>
         <li v-else-if="!suggestions.length"> Aucun tag trouvé. </li>
         <li v-else v-for="(item, index) in suggestions"
-            @click="select(item)"
+            @click="select(item, true)"
             :class="{selected: index === selectedIndex}">
             {{ item.name }}
-            <button class="button is-pulled-right is-danger"
+            <button v-if="!includeOnly"
+                class="button is-pulled-right is-danger"
+                @click.stop="select(item, false)"
                 :class="{'is-outlined': (index !== selectedIndex) || include}">
                 <span class="icon">
                     <aw-icon name="minus"></aw-icon>
@@ -27,11 +29,10 @@
     const listenedKeys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.ENTER, KEY.TAB];
 
     export default {
-        props: ['show', 'suggestions', 'loading'],
+        props: ['show', 'suggestions', 'loading', 'include', 'includeOnly'],
         data() {
             return {
-                selectedIndex: 0,
-                include: true
+                selectedIndex: 0
             };
         },
         methods: {
@@ -46,21 +47,27 @@
                 if (listenedKeys.indexOf(event.keyCode) === -1) return;
                 switch (event.keyCode) {
                     case KEY.LEFT:
-                        this.include = true;
+                    case KEY.RIGHT:
+                        this.$emit('include', !this.include);
+                        break;
                     case KEY.DOWN:
                         this.decrement();
+                        break;
                     case KEY.UP:
                         this.increment();
-                    case KEY.RIGHT:
-                        this.include = false;
+                        break;
                     case KEY.TAB:
                     case KEY.ENTER:
-                        this.select(this.suggestions[this.selectedIndex]);
+                        this.select(this.suggestions[this.selectedIndex], this.include || this.includeOnly);
+                        break;
                 }
                 event.preventDefault();
             },
-            select(item) {
-                this.$emit('select', item.name);
+            select(item, include) {
+                this.$emit('select', {
+                    name: item.name,
+                    include: this.include && include
+                });
                 this.selectedIndex = 0;
             }
         },
@@ -81,21 +88,28 @@
     @import "../../styles/variables.scss";
 
     ul {
+        margin-left: 0;
         position: absolute;
         margin-top: -1px;
         width: 100%;
         border: 1px solid $grey-light;
         border-bottom-left-radius: $radius;
         border-bottom-right-radius: $radius;
+        z-index: 1;
+        background-color: $white;
     }
 
     li {
+        display: block;
         height: 40px;
         line-height: 40px;
+        margin: 0!important;
         padding-left: 30px;
         padding-right: 30px;
+        cursor: pointer;
+        transition: background-color $speed $easing;
 
-        &.selected {
+        &.selected, &:hover {
             background-color: $grey-lighter;
         }
     }

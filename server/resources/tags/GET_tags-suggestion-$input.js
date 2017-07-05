@@ -2,7 +2,7 @@ const keystone = require('keystone');
 
 module.exports = async function({input}) {
     const startWithInput = new RegExp('^' + input.toLowerCase());
-    const suggestedTags = await keystone.findTags([startWithInput]);
+    const suggestedTags = await keystone.findTags([startWithInput], 10);
     return suggestedTags.map(t => {
         if (startWithInput.test(t.name)) {
             return { name: t.name, color: t.color };

@@ -8,10 +8,7 @@ export default {
     },
     mutations: {
         SET_USER(state, {slug, user}) {
-            const avatar = user.avatar.filename;
-            Vue.set(state.users, slug, Object.assign({}, user, {
-                avatar: avatar ? `/avatars/${avatar}` : 'http://bulma.io/images/jgthms.png'
-            }));
+            Vue.set(state.users, slug, user);
         },
         SET_DESCRIPTION(state, {slug, description}) {
             state.users[slug].description.md = description;

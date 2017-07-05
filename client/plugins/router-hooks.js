@@ -1,5 +1,14 @@
 export default function(router, store) {
     if (typeof window !== 'undefined') {
+        router.beforeEach((to, from, next) => {
+            window.document.body.style.cursor = 'wait';
+            next();
+        });
+
+        router.afterEach(() => {
+            window.document.body.style.cursor = '';
+        });
+
         router.beforeResolve((to, from, next) => {
             const matched = router.getMatchedComponents(to);
             const prevMatched = router.getMatchedComponents(from);

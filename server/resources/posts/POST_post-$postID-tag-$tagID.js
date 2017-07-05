@@ -5,7 +5,7 @@ module.exports = async function({postID, tagID}, user) {
     keystone.isAuth(user);
 
     const requestedPost = await keystone.request('Post', postID);
-    const tag = await getOrCreateTags({tags: [tagID]});
+    const tag = await getOrCreateTags({tags: [tagID]}, user);
 
     if (requestedPost.tags.some(t => t._id.equals(tag[0]._id))) {
         throw new Error('Post already have the tag ' + tag[0].name);

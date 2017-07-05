@@ -2,8 +2,8 @@ import Vue from 'vue';
 import routes from './routes';
 import createStore from './store/';
 import AppRoot from './App.vue';
-import './plugins/awesome-icons';
 import routerHooks from './plugins/router-hooks';
+import './plugins/';
 
 export default function createApp(context = {}) {
     const {url, activeUser} = context;
@@ -26,23 +26,29 @@ export default function createApp(context = {}) {
         store.dispatch('config/FETCH_CONFIG').then(() => {
             if (url) router.push(url);
             if (activeUser) store.commit('auth/SET_ACTIVE_USER', activeUser);
-            if (typeof window !== 'undefined') store.replaceState(window.__INITIAL_STATE__);
-
-            router.onReady(() => {
-                routerHooks(router, store);
-                const matchedComponents = router.getMatchedComponents();
-                Promise.all(matchedComponents.map(({asyncData}) => {
-                    if (asyncData) {
-                        return asyncData({
-                            store,
-                            route: router.currentRoute
-                        });
-                    }
-                })).then(() => {
-                    context.state = store.state;
+            if (typeof window !== 'undefined') {
+                store.replaceState(window.__INITIAL_STATE__);
+                router.onReady(() => {
+                    routerHooks(router, store);
                     resolve(app);
                 });
-            });
+            }
+            else {
+                router.onReady(() => {
+                    const matchedComponents = router.getMatchedComponents();
+                    Promise.all(matchedComponents.map(({asyncData}) => {
+                        if (asyncData) {
+                            return asyncData({
+                                store,
+                                route: router.currentRoute
+                            });
+                        }
+                    })).then(() => {
+                        context.state = store.state;
+                        resolve(app);
+                    });
+                });
+            }
         });
     });
 }

@@ -30,8 +30,6 @@ module.exports = async function({name, password, passwordConfirm, email}, user) 
     await createdUser.save();
 
     return keystone.format(createdUser, {
-        _id: undefined,
-        canAccessKeystone: undefined,
         posts: 0,
         favorites: 0
     });
