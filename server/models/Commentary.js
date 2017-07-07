@@ -6,7 +6,7 @@ const Commentary = new keystone.List('Commentary');
 Commentary.add({
     content: { type: Types.Markdown, required: true, initial: true },
     author: { type: Types.Relationship, ref: 'User' },
-    posted_at: { type: Types.Date, readOnly: true, index: true }
+    posted_at: { type: Types.Datetime, readOnly: true, index: true }
 });
 
 Commentary.schema.pre('save', function(next) {

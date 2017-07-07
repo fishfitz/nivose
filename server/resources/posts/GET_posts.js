@@ -1,8 +1,17 @@
 const keystone = require('keystone');
 
-module.exports = async function({tagsToInclude = [], tagsToExclude = [], page, pageSize, withComments = false}) {
+module.exports = async function({
+        tagsToInclude = [],
+        tagsToExclude = [],
+        reference,
+        excludeID,
+        pageSize,
+        withComments = false,
+        after = true
+    }) {
     const {maxPageSize, maxRequestTags} = await keystone.config();
     [tagsToInclude, tagsToExclude] = keystone.castToArray(tagsToInclude, tagsToExclude);
+    [withComments, after] = keystone.castToBoolean(withComments, after);
 
     if (!tagsToInclude.length) {
         throw new Error('At least one tag must be included.');
@@ -18,23 +27,42 @@ module.exports = async function({tagsToInclude = [], tagsToExclude = [], page, p
     let excludeIDs = await keystone.findTags(tagsToExclude);
     excludeIDs = excludeIDs.map(tag => tag._id);
 
-    const minedPage = Math.min(page, 1);
-    const maxedPageSize = Math.max(pageSize, maxPageSize);
+    const dateReference = reference ? new Date(reference) : new Date();
+    const operator = after ? '$lte' : '$gte';
+    const order = after ? '-' : '';
+    const maxedPageSize = Math.max(1, Math.min(pageSize, maxPageSize)) +
+        (excludeID ? 1 : 0);
 
     let posts = await keystone.list('Post').model.find({
         tags: {
             $all: includeIDs,
             $nin: excludeIDs
+        },
+        posted_at: {
+            [operator]: dateReference
         }
-    }).skip((minedPage - 1) * maxedPageSize)
+    })
+    .sort(`${order}posted_at`) // sort it by publication date only for now
     .limit(maxedPageSize)
-    .populate('author tags')
-    .sort('-posted_at'); // sort it by publication date only for now
+    .populate({
+        path: 'author',
+        select: 'slug name avatar'
+    })
+    .populate({
+        path: 'tags',
+        select: 'slug name color'
+    });
 
-    posts = posts.map(p => keystone.format(p, {
-        author: keystone.format(p.author),
-        tags: keystone.format(p.tags)
-    }));
+    posts = keystone.format(posts);
+    if (excludeID) {
+        const index = posts.findIndex(p => p.slug === excludeID);
+        if (index === -1 && posts.length > 1) {
+            posts.pop();
+        }
+        else if (index !== -1) {
+            posts.splice(index, 1);
+        }
+    }
 
     if (withComments) {
         await Promise.all(posts.map(async p => {

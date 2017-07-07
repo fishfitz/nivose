@@ -13,7 +13,7 @@ User.add({
     posts: { type: Types.Relationship, ref: 'Post', many: true },
     favorites: { type: Types.Relationship, ref: 'Post', many: true },
     description: { type: Types.Markdown, default: '' },
-    registered_at: { type: Types.Date, readOnly: true },
+    registered_at: { type: Types.Datetime, readOnly: true },
     avatar: {
         type: Types.File,
         storage: new keystone.Storage({

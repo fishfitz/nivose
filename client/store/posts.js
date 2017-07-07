@@ -7,16 +7,16 @@ export default {
         posts: []
     },
     mutations: {
-        SET_POSTS(state, {posts, replace, up}) {
+        SET_POSTS(state, {posts, replace, after}) {
             state.post = {};
             if (replace) {
                 state.posts = posts;
             }
-            else if (up) {
-                state.posts.unshift(...posts);
+            else if (after) {
+                state.posts.push(...posts);
             }
             else {
-                state.posts.push(...posts);
+                state.posts.unshift(...(posts.sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at))));
             }
         },
         SET_POST(state, post) {
@@ -39,17 +39,22 @@ export default {
         }
     },
     actions: {
-        SEARCH_POSTS({commit}, {tags, page, pageSize, replace = false, up = false}) {
+        SEARCH_POSTS({commit}, {tags, pageSize = 2, reference, excludeID, replace = false, after = true}) {
             return api({
                 path: 'GET_posts',
                 data: {
                     tagsToExclude: tags.filter(t => !t.include).map(t => t.name),
                     tagsToInclude: tags.filter(t => t.include).map(t => t.name),
                     withComments: true,
-                    page,
-                    pageSize
+                    pageSize,
+                    reference,
+                    after,
+                    excludeID
                 }
-            }).then(({posts}) => commit('SET_POSTS', {posts, replace, up}));
+            }).then(({posts}) => {
+                commit('SET_POSTS', {posts, replace, after});
+                return posts;
+            });
         },
         SUBMIT_POST({commit}, {description, tags, image}) {
             const data = new window.FormData();

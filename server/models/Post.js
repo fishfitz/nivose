@@ -8,7 +8,7 @@ const Post = new keystone.List('Post', {
 Post.add({
     name: { type: Types.Text, required: true, index: true },
     description: { type: Types.Markdown, default: '' },
-    posted_at: { type: Types.Date, readOnly: true, index: true },
+    posted_at: { type: Types.Datetime, readOnly: true, index: true },
     author: { type: Types.Relationship, ref: 'User' },
     tags: { type: Types.Relationship, ref: 'Tag', many: true, index: true },
     comments: { type: Types.Relationship, ref: 'Commentary', many: true },

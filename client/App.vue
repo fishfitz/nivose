@@ -1,7 +1,7 @@
 <template>
     <section>
         <app-header></app-header>
-        <div>
+        <div class="sub-header-content">
             <slot></slot>
         </div>
     </section>
@@ -22,4 +22,8 @@
     @import "./styles/transitions.scss";
     @import "./styles/layout.scss";
     @import "./styles/forms.scss";
+
+    .sub-header-content {
+        padding-top: 52px;
+    }
 </style>
