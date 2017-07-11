@@ -7,7 +7,9 @@
         </figure>
         <div class="media-content">
             <div class="content">
-                <strong>{{ comment.author.name }}</strong>
+                <router-link :to="{ name: 'user', params: { userID: comment.author.slug} }">
+                    <strong> {{ comment.author.name }} </strong>
+                </router-link>
                 <small>
                     {{ comment.posted_at | formatDate }}
                 </small>

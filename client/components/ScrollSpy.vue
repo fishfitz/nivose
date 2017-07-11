@@ -16,12 +16,13 @@
         },
         methods: {
             listen: debounce(function(event) {
+                if (!this.$slots.default.length) return;
                 const pos = document.body.scrollTop;
                 const index = this.closestIndex(pos, this.$slots.default.map(e => e.elm.offsetTop));
                 if (index !== this.value) {
                     this.$emit('input', index);
                 }
-            }, 300),
+            }, 500),
             closestIndex(value, array) {
                 let low = 0;
                 let high = array.length - 1;

@@ -1,7 +1,7 @@
 <template>
     <div class="field has-addons">
         <template v-if="isAuth">
-            <router-link :to="'/user/' + activeUser.slug" class="control">
+            <router-link :to="{name: 'user', params: {userID: activeUser.slug}}" class="control">
                 <span class="button is-white">
                     <img :src="activeUser.avatar" class="image is-24x24">
                     <span class="xs-hide"> {{ activeUser.name }} </span>

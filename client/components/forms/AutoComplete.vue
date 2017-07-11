@@ -26,7 +26,7 @@
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/minus';
 
-    const listenedKeys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.ENTER, KEY.TAB];
+    const listenedKeys = [KEY.UP, KEY.DOWN, KEY.LEFT, KEY.RIGHT, KEY.ENTER, KEY.TAB, KEY.ESCAPE];
 
     export default {
         props: ['show', 'suggestions', 'loading', 'include', 'includeOnly'],
@@ -59,6 +59,9 @@
                     case KEY.TAB:
                     case KEY.ENTER:
                         this.select(this.suggestions[this.selectedIndex], this.include || this.includeOnly);
+                        break;
+                    case KEY.ESCAPE:
+                        this.$emit('close');
                         break;
                 }
                 event.preventDefault();
@@ -95,8 +98,9 @@
         border: 1px solid $grey-light;
         border-bottom-left-radius: $radius;
         border-bottom-right-radius: $radius;
-        z-index: 1;
+        z-index: 2;
         background-color: $white;
+        overflow: hidden;
     }
 
     li {

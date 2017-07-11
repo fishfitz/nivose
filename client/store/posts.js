@@ -4,20 +4,29 @@ export default {
     namespaced: true,
     state: {
         post: {},
-        posts: []
+        posts: [],
+        blockBottom: false,
+        blockTop: false
     },
     mutations: {
         SET_POSTS(state, {posts, replace, after}) {
             state.post = {};
             if (replace) {
+                state.blockBottom = state.blockTop = !posts.length;
                 state.posts = posts;
             }
             else if (after) {
+                state.blockBottom = !posts.length;
                 state.posts.push(...posts);
             }
             else {
+                state.blockTop = !posts.length;
                 state.posts.unshift(...(posts.sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at))));
             }
+        },
+        RESET_POSTS(state) {
+            state.posts = [];
+            state.blockTop = state.blockBottom = false;
         },
         SET_POST(state, post) {
             state.posts = [];
@@ -39,7 +48,13 @@ export default {
         }
     },
     actions: {
-        SEARCH_POSTS({commit}, {tags, pageSize = 2, reference, excludeID, replace = false, after = true}) {
+        FETCH_POST({commit}, {postID}) {
+            return api({
+                path: 'GET_post-$postID',
+                params: { postID }
+            }).then(post => commit('SET_POST', post));
+        },
+        SEARCH_POSTS({commit}, {tags, pageSize = 10, reference, excludeID, replace = false, after = true}) {
             return api({
                 path: 'GET_posts',
                 data: {

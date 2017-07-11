@@ -3,7 +3,7 @@ const keystone = require('keystone');
 module.exports = async function({postID}) {
     const requestedPost = await keystone.request('Post', postID, {
         populate: {
-            author: 'slug name',
+            author: 'slug name avatar',
             tags: 'name color'
         }
     });

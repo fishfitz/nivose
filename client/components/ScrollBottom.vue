@@ -22,8 +22,7 @@
                 return ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 10);
             },
             listen(event) {
-                if (this.loading) return;
-                if (!this.block && this.reachBottom()) {
+                if (!this.loading && !this.block && this.reachBottom()) {
                     this.$emit('reach');
                 }
             }

@@ -2,7 +2,7 @@
     <nav class="nav">
         <div class="container">
             <div class="nav-left">
-                <router-link class="nav-item" to="/">
+                <router-link class="nav-item" :to="{name: 'home'}" exact>
                     <aw-icon name="home"></aw-icon>
                 </router-link>
             </div>
@@ -10,7 +10,7 @@
             <div class="nav-center nav-menu">
                 <router-link class="nav-item"
                     v-for="tag in frontPageTags" :key="tag"
-                    :to="'/tag/' + tag">
+                    :to="{name: 'tag', params: {tagID: tag}}">
                     <aw-icon class="xs-hide" name="hashtag" scale="0.8"></aw-icon>
                     <b class="sm-hide md-hide lg-hide"> # </b>
                     &nbsp; {{ tag }}

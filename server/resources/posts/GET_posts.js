@@ -72,9 +72,7 @@ module.exports = async function({
                     author: 'slug name avatar'
                 }
             });
-            p.comments = comments.map(c => {
-                return keystone.format(c, {author: keystone.format(c.author)});
-            });
+            p.comments = keystone.format(comments);
             return;
         }));
     }

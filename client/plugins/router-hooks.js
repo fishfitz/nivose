@@ -10,13 +10,16 @@ export default function(router, store) {
         });
 
         router.beforeResolve((to, from, next) => {
-            const matched = router.getMatchedComponents(to);
-            const prevMatched = router.getMatchedComponents(from);
-            let diffed = false;
-            const activated = matched.filter((c, i) => {
-                return diffed || (diffed = (prevMatched[i] !== c));
-            });
-            const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _);
+            const reRender = !Object.keys(to.params).length ||
+                !Object.keys(from.params).length ||
+                Object.keys(to.params).some(i => i !== 'reference' && to.params[i] !== from.params[i]);
+
+            if (!reRender) {
+                return next();
+            }
+
+            const asyncDataHooks = router.getMatchedComponents(to)
+                .map(c => c.asyncData).filter(_ => _);
             if (!asyncDataHooks.length) {
                 return next();
             }

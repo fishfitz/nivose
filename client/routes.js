@@ -6,32 +6,37 @@ Vue.use(VueRouter);
 export default (activeUserSlug) => {
     return new VueRouter({
         mode: 'history',
+        linkActiveClass: 'is-active',
         routes: [
             {
                 name: 'home',
                 path: '/',
-                component: require('./pages/FrontPage.vue')
-                // resolve => require(['./pages/FrontPage.vue'], resolve)
+                component: resolve => require(['./pages/FrontPage.vue'], resolve)
             },
             {
                 name: 'user',
                 path: '/user/:userID',
-                component: require('./pages/User.vue')
+                component: resolve => require(['./pages/User.vue'], resolve)
             },
             {
                 name: 'search',
                 path: '/search',
-                component: require('./pages/Search.vue')
+                component: resolve => require(['./pages/Search.vue'], resolve)
             },
             {
                 name: 'post',
                 path: '/post',
-                component: require('./pages/Post.vue')
+                component: resolve => require(['./pages/Post.vue'], resolve)
+            },
+            {
+                name: 'singlePost',
+                path: '/post/:postID',
+                component: resolve => require(['./pages/SinglePost.vue'], resolve)
             },
             {
                 name: 'tag',
                 path: '/tag/:tagID/:reference?',
-                component: require('./pages/Tag.vue')
+                component: resolve => require(['./pages/Tag.vue'], resolve)
             }
         ]
     });

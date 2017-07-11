@@ -2,7 +2,7 @@ const keystone = require('keystone');
 const path = require('path');
 const fs = require('fs');
 const vueSSR = require('vue-server-renderer');
-const routes = ['/', '/user/:userID', '/search', '/post', '/tag/:tag/:reference?'];
+const routes = ['/', '/user/:userID', '/search', '/post', '/post/:postID', '/tag/:tag/:reference?'];
 
 function createRenderer() {
     return vueSSR.createBundleRenderer(require('../client/bundle.json'), {
@@ -27,25 +27,33 @@ function stopListen(stream) {
 module.exports = function(app) {
     app.get(routes, (req, res) => {
         const renderer = getRenderer();
-        const stream = renderer.renderToStream({
-            url: req.originalUrl,
-            activeUser: req.user ? keystone.format(req.user, {
-                posts: req.user.posts.length,
-                favorites: req.user.favorites.length
-            }) : false
-        });
+        let stream;
+        try {
+            stream = renderer.renderToStream({
+                url: req.originalUrl,
+                activeUser: req.user ? keystone.format(req.user, {
+                    posts: req.user.posts.length,
+                    favorites: req.user.favorites.length
+                }) : false
+            });
 
-        stream.on('error', err => {
+            stream.on('error', err => {
+                console.log(err);
+                stopListen(stream);
+                res.end(String(err));
+            });
+
+            stream.on('data', data => res.write(data));
+
+            stream.on('end', () => {
+                stopListen(stream);
+                res.end();
+            });
+        }
+        catch (err) {
             console.log(err);
             stopListen(stream);
             res.end(String(err));
-        });
-
-        stream.on('data', data => res.write(data));
-
-        stream.on('end', () => {
-            stopListen(stream);
-            res.end();
-        });
+        }
     });
 };

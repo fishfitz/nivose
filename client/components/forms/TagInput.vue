@@ -1,17 +1,21 @@
 <template>
     <div class="field has-addons has-addons-centered">
-        <div class="control is-expanded">
-            <div @click="focusInput(value.length)" class="input is-large vue-input-tag-wrapper">
-                <span v-for="(tag, index) in value" class="unbreakable">
+        <div @keydown.enter="doSubmitIfNoSuggestion" class="control is-expanded">
+            <div @click="focusInput(value.length); displaySuggestions(value.length, newTag);"
+                class="input is-large vue-input-tag-wrapper"
+                :class="{'is-focused': focus}">
+                <span v-for="(tag, index) in value" class="unbreakable"
+                    @click.stop="focusInput(index)">
                     <input type="text" class="cursor-only"
                         :style="{ width: tag.input.length + 'ch' }"
                         v-model="tag.input"
+                        @click="displaySuggestions(index, tag.input)"
                         @input="displaySuggestions(index, tag.input)"
                         @keydown.8.stop="removeKeyboardBack(index)"
                         @keydown.46.stop="removeKeyboardDelete(index)"
                         @keydown.left="moveCursorLeft(index)"
                         @keydown.right="moveCursorRight(index)">
-                    <span @click.stop="focusInput(index)" class="tag is-medium">
+                    <span class="tag is-medium">
                         <button v-if="!includeOnly"
                             class="button is-small tag-button is-outlined"
                             :class="{'is-danger': !tag.include}"
@@ -29,6 +33,7 @@
                     v-bind:placeholder="placeholder"
                     v-model="newTag"
                     @input="displaySuggestions(value.length, newTag)"
+                    @click="displaySuggestions(value.length, newTag)"
                     @keydown.8.stop="removeKeyboardBack(value.length)"
                     @keydown.left="moveCursorLeft(value.length)">
             </div>
@@ -38,6 +43,7 @@
                 :include="include"
                 :includeOnly="includeOnly"
                 @include="switchInclude"
+                @close="showSuggestions = false"
                 @select="onSelect">
             </auto-complete>
         </div>
@@ -90,7 +96,8 @@
                 newTag: '',
                 showSuggestions: '',
                 loadingSuggestions: '',
-                suggestions: []
+                suggestions: [],
+                focus: false
             };
         },
         methods: {
@@ -188,11 +195,32 @@
             switchInclude(include) {
                 this.include = include;
             },
+            doSubmitIfNoSuggestion() {
+                if (this.showSuggestions) return;
+                this.doSubmit();
+            },
             doSubmit() {
                 if (!this.value.length) return;
                 this.closeSuggestions();
+                this.focus = false;
                 this.$emit('submit', this.value);
+            },
+            listenClickOutside(event) {
+                if (!this.$el.contains(event.target)) {
+                    this.showSuggestions = false;
+                    this.loadingSuggestions = false;
+                    this.focus = false;
+                }
+                else {
+                    this.focus = true;
+                }
             }
+        },
+        mounted() {
+            document.addEventListener('click', this.listenClickOutside);
+        },
+        destroyed() {
+            document.removeEventListener('click', this.listenClickOutside);
         }
     };
 </script>
@@ -205,13 +233,17 @@
     }
 
     .new-tag, .cursor-only {
-        height: 100%;
         border: none;
         background-color: transparent;
     }
 
+    .unbreakable {
+        display: flex;
+        align-items: stretch;
+    }
+
     .cursor-only {
-        min-width: 1px;
+        min-width: 2px;
     }
 
     .tag {

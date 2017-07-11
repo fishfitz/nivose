@@ -3,10 +3,12 @@
         <div class="column">
             <img :src="post.image" class="displayed-image" @click="$emit('select', post.image)">
             <div>
-                <span v-for="tag in post.tags">
+                <router-link v-for="tag in post.tags"
+                    :to="{name: 'tag', params: {tagID: tag.name}}"
+                    :key="tag.name">
                     <aw-icon name="hashtag" scale="0.7"></aw-icon>
                     {{ tag.name }}
-                </span>
+                </router-link>
             </div>
         </div>
 
@@ -21,7 +23,11 @@
                     <div class="content">
                         <div>
                             Posté par :
-                            <strong>{{ post.author.name }}</strong>
+                            <router-link :to="{ name: 'user', params: { userID: post.author.slug} }">
+                                <strong>
+                                    {{ post.author.name }}
+                                </strong>
+                            </router-link>
                             <br>
                             <small>
                                 {{ post.posted_at | formatDate }}

@@ -7,6 +7,7 @@
         <div class="container">
             <scroll-spy v-model="topPost">
                 <post-large v-for="post in posts"
+                    v-if="post.slug"
                     :post="post" :key="post.slug" :isAuth="isAuth"
                     class="post-large"
                     @select="selectImage">
@@ -18,14 +19,7 @@
             </div>
         </div>
 
-        <div class="modal is-active is-fullwidth" v-if="selectedImage" @click="selectedImage = null">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-                <p class="image selected-image">
-                    <img :src="selectedImage">
-                </p>
-            </div>
-        </div>
+        <image-overlay v-model="selectedImage"></image-overlay>
 
         <scroll-bottom @reach="loadBottom"
             :block="blockBottom || !posts.length"
@@ -38,6 +32,7 @@
     import ScrollSpy from '../components/ScrollSpy.vue';
     import ScrollTop from '../components/ScrollTop.vue';
     import ScrollBottom from '../components/ScrollBottom.vue';
+    import ImageOverlay from '../components/modals/ImageOverlay.vue';
     import PostLarge from '../components/PostLarge.vue';
 
     export default {
@@ -45,6 +40,7 @@
             ScrollSpy,
             ScrollTop,
             ScrollBottom,
+            ImageOverlay,
             PostLarge
         },
         data() {
@@ -52,7 +48,6 @@
                 selectedImage: null,
                 loadingTop: false,
                 loadingBottom: false,
-                blockBottom: false,
                 topPost: 0
             };
         },
@@ -68,6 +63,9 @@
             },
             page() {
                 return this.$route.params.page;
+            },
+            blockBottom() {
+                return this.$store.state.posts.blockBottom;
             }
         },
         methods: {
@@ -81,10 +79,9 @@
                 this.loadingBottom = true;
                 return this.$store.dispatch('posts/SEARCH_POSTS', {
                     tags: [{ name: this.tag, include: true }],
-                    reference: this.posts[this.posts.length - 1].posted_at,
-                    excludeID: this.posts[this.posts.length - 1].slug
+                    reference: this.posts.length ? this.posts[this.posts.length - 1].posted_at : undefined,
+                    excludeID: this.posts.length ? this.posts[this.posts.length - 1].slug : undefined
                 }).then(posts => {
-                    this.blockBottom = !posts.length;
                     this.$nextTick(() => (this.loadingBottom = false));
                 });
             },
@@ -93,11 +90,11 @@
                 const currentPost = this.findPost(0);
                 return this.$store.dispatch('posts/SEARCH_POSTS', {
                     tags: [{ name: this.tag, include: true }],
-                    reference: this.posts[0].posted_at,
-                    excludeID: this.posts[0].slug,
+                    reference: this.posts.length ? this.posts[0].posted_at : undefined,
+                    excludeID: this.posts.length ? this.posts[0].slug : undefined,
                     after: false
                 }).then(posts => {
-                    currentPost.scrollIntoView();
+                    if (currentPost) currentPost.scrollIntoView();
                     document.body.scrollTop -= 88;
                     this.$nextTick(() => (this.loadingTop = false));
                 });
@@ -125,22 +122,6 @@
 </script>
 
 <style lang="scss" scoped>
-    .modal-content {
-        max-height: none;
-        cursor: pointer;
-
-        p {
-            text-align: center;
-
-            img {
-                display: inline-block;
-                width: auto;
-                height: auto;
-                max-height: 100%;
-            }
-        }
-    }
-
     .scroll-top {
         position: absolute;
         top: 55px;
