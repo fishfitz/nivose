@@ -31,7 +31,7 @@ Post.schema.pre('save', function(next) {
         this.posted_at = new Date();
     }
     this.commentsNumber = this.comments.length;
-    if (!this.content.md) this.content = {md: ''};
+    if (!this.description.md) this.description = {md: ''};
     next();
 });
 
