@@ -1,8 +1,23 @@
-const path = require('path'),
-    HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+let plugins = [
+    new HtmlWebpackPlugin({
+        filename: '../client/template.html',
+        template: path.join(__dirname, '../client/template.html'),
+        inject: false
+    })
+];
+
+if (process.env.NODE_ENV === 'production') {
+    plugins.push(new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin(),
+        new webpack.optimize.AggressiveMergingPlugin());
+}
 
 module.exports = {
-    watch: true,
+    watch: process.env.NODE_ENV === 'development',
     target: 'web',
     entry: path.join(__dirname, '../client/index.js'),
     output: {
@@ -48,11 +63,5 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            filename: '../client/template.html',
-            template: path.join(__dirname, '../client/template.html'),
-            inject: false
-        })
-    ]
+    plugins
 };

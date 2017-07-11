@@ -1,8 +1,8 @@
-const path = require('path'),
-    { VueSSRServerPlugin } = require('vue-ssr-webpack-plugin');
+const path = require('path');
+const { VueSSRServerPlugin } = require('vue-ssr-webpack-plugin');
 
 module.exports = {
-    watch: true,
+    watch: process.env.NODE_ENV === 'development',
     target: 'node',
     entry: path.join(__dirname, '../client/index.js'),
     output: {
