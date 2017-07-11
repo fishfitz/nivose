@@ -1,18 +1,37 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let plugins = [
     new HtmlWebpackPlugin({
         filename: '../client/template.html',
         template: path.join(__dirname, '../client/template.html'),
         inject: false
+    }),
+    new ExtractTextPlugin({
+        filename: 'common.css'
     })
 ];
 
 if (process.env.NODE_ENV === 'production') {
-    plugins.push(new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin(),
+    plugins.push(new webpack.DefinePlugin({
+        'process.env.NODE_ENV': '"production"',
+        'process.env.VUE_ENV': '"client"'
+    }), new webpack.optimize.UglifyJsPlugin({sourceMap: false,
+        compress: {
+            sequences: true,
+            dead_code: true,
+            conditionals: true,
+            booleans: true,
+            unused: true,
+            if_return: true,
+            join_vars: true,
+            drop_console: true
+        },
+        output: {
+            comments: false
+        }}),
         new webpack.optimize.AggressiveMergingPlugin());
 }
 
@@ -27,28 +46,30 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'request-api': './request-api-client.js'
+            'request-api': './request-api-client.js',
+            'vue-masonry': './ignore-plugin.js'
         }
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['env']
-                    }
-                }
+                loader: 'babel-loader',
+                exclude: /node_modules/
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
+                options: {
+                    extractCSS: true
+                }
             },
             {
-                test: /\.css$/,
-                loader: 'style-loader!css-loader'
+                test: /\.(css|sass|scss)$/,
+                use: ExtractTextPlugin.extract({
+                    use: 'css-loader?minimize',
+                    fallback: 'vue-style-loader'
+                })
             },
             {
                 test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
