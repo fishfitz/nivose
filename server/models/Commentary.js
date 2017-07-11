@@ -13,6 +13,7 @@ Commentary.schema.pre('save', function(next) {
     if (!this.posted_at) {
         this.posted_at = new Date();
     }
+    if (!this.content.md) this.content = {md: ''};
     next();
 });
 

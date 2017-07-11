@@ -3,7 +3,7 @@
         <template v-if="isAuth">
             <router-link :to="{name: 'user', params: {userID: activeUser.slug}}" class="control">
                 <span class="button is-white">
-                    <img :src="activeUser.avatar" class="image is-24x24">
+                    <img :src="activeUser.avatar || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTctfQYPcfoA_S5ZxyOYRD0kUCqkva4U5jHB791wtr9qPTe2WS44A'" class="image is-24x24">
                     <span class="xs-hide"> {{ activeUser.name }} </span>
                 </span>
             </router-link>

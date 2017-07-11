@@ -12,7 +12,7 @@ User.add({
     canAccessKeystone: { type: Boolean, initial: false },
     posts: { type: Types.Relationship, ref: 'Post', many: true },
     favorites: { type: Types.Relationship, ref: 'Post', many: true },
-    description: { type: Types.Markdown, default: '' },
+    description: { type: Types.Markdown, required: true, default: {md: ''} },
     registered_at: { type: Types.Datetime, readOnly: true },
     avatar: {
         type: Types.File,
@@ -30,6 +30,7 @@ User.schema.pre('save', function(next) {
     if (!this.registered_at) {
         this.registered_at = new Date();
     }
+    if (!this.description.md) this.description = {md: ''};
     next();
 });
 

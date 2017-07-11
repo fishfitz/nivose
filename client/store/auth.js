@@ -46,7 +46,7 @@ export default {
                     password: password,
                     passwordConfirm: passwordConfirm
                 }
-            }).then(() => dispatch('SIGN_UP', {name, password}));
+            }).then(() => dispatch('SIGN_IN', {name, password}));
         }
     }
 };

@@ -6,13 +6,14 @@ const Tag = new keystone.List('Tag');
 Tag.add({
     name: { type: Types.Text, required: true, index: true },
     color: { type: Types.Color },
-    description: { type: Types.Markdown, default: '' },
+    description: { type: Types.Markdown, required: true, default: {md: ''} },
     synonyms: { type: Types.TextArray, default: [], index: true }
 });
 
 Tag.schema.pre('save', function(next) {
     this.name = this.name.toLowerCase();
     this.synonyms = this.synonyms.map(s => s.toLowerCase());
+    if (!this.description.md) this.description = {md: ''};
     next();
 });
 

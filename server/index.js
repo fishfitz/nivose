@@ -17,7 +17,8 @@ keystone.init({
     'cookie secret': keystone.serverConfig.COOKIE_SECRET,
     mongo: keystone.serverConfig.MONGO,
     port: keystone.serverConfig.PORT,
-    host: keystone.serverConfig.HOST
+    host: keystone.serverConfig.HOST,
+    env: process.env.NODE_ENV
 });
 
 fs.readdirSync('./models').forEach(m => {

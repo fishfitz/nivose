@@ -50,8 +50,9 @@
             <input type="submit" id="signUpSubmit" class="is-hidden" :disabled="!valid">
         </form>
 
-        <label slot="footer" form="signUpForm" for="signInSubmit"
-            class="button is-success" :disabled="!valid">
+        <label slot="footer" form="signUpForm" for="signUpSubmit"
+            class="button is-success" :disabled="!valid"
+            :class="{'is-loading': loading}">
             S'inscrire
         </label>
     </modal>
@@ -75,7 +76,8 @@
                 passwordConfirm: '',
                 email: '',
                 nameAvailible: true,
-                emailAvailible: true
+                emailAvailible: true,
+                loading: false
             };
         },
         computed: {
@@ -116,12 +118,13 @@
             }, 300),
             doSignUp() {
                 if (!this.valid) return;
+                this.loading = true;
                 this.$store.dispatch('auth/SIGN_UP', {
                     name: this.name,
                     email: this.email,
                     password: this.password,
                     passwordConfirm: this.passwordConfirm
-                });
+                }).then((this.loading = false));
             }
         }
     };

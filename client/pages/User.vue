@@ -13,7 +13,7 @@
                             <aw-icon name="pencil" scale="2"></aw-icon>
                         </button>
                     </template>
-                    <img :src="user.avatar">
+                    <img :src="user.avatar || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTctfQYPcfoA_S5ZxyOYRD0kUCqkva4U5jHB791wtr9qPTe2WS44A'">
                 </figure>
             </div>
 

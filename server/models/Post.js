@@ -7,7 +7,7 @@ const Post = new keystone.List('Post', {
 
 Post.add({
     name: { type: Types.Text, required: true, index: true },
-    description: { type: Types.Markdown, default: '' },
+    description: { type: Types.Markdown, required: true, default: {md: ''} },
     posted_at: { type: Types.Datetime, readOnly: true, index: true },
     author: { type: Types.Relationship, ref: 'User' },
     tags: { type: Types.Relationship, ref: 'Tag', many: true, index: true },
@@ -31,6 +31,7 @@ Post.schema.pre('save', function(next) {
         this.posted_at = new Date();
     }
     this.commentsNumber = this.comments.length;
+    if (!this.content.md) this.content = {md: ''};
     next();
 });
 
