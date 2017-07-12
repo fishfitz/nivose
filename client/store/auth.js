@@ -9,7 +9,7 @@ export default {
     mutations: {
         SET_ACTIVE_USER(state, user) {
             state.isAuth = true;
-            state.activeUser = user;
+            state.activeUser = Object.assign({}, user);
         },
         REMOVE_ACTIVE_USER(state) {
             state.isAuth = false;

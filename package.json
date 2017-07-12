@@ -36,6 +36,7 @@
         "webpack": "^2.4.1"
     },
     "scripts": {
+        "forever": "forever start -c \"node --harmony\" ./server/index.js",
         "start": "node --harmony ./server/index.js",
         "build": "cross-env NODE_ENV=production webpack -p --config build/webpack.config.js",
         "dev": "webpack --config build/webpack.config.js"

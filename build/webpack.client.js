@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === 'production') {
 module.exports = {
     watch: process.env.NODE_ENV === 'development',
     target: 'web',
-    entry: path.join(__dirname, '../client/index.js'),
+    entry: path.join(__dirname, '../client/entry-client.js'),
     output: {
         filename: 'bundle.js',
         publicPath: '/',
@@ -46,8 +46,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'request-api': './request-api-client.js',
-            'vue-masonry': './ignore-plugin.js'
+            'request-api': './request-api-client.js'
         }
     },
     module: {
