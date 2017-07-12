@@ -11,10 +11,10 @@ Vue.use(Vuex);
 export default function() {
     return new Vuex.Store({
         modules: {
-            auth,
-            config,
-            users,
-            posts
+            auth: auth(),
+            config: config(),
+            users: users(),
+            posts: posts()
         }
     });
 }
