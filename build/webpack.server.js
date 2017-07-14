@@ -51,7 +51,7 @@ module.exports = {
             filename: 'bundle.json'
         }),
         new ExtractTextPlugin({
-            filename: '_dumpthis.css'
+            filename: '_'
         })
     ],
     externals: Object.keys(require('../package.json').dependencies)

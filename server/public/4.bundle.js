@@ -659,7 +659,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     domProps: {
       "innerHTML": _vm._s(_vm.user.description.html || _vm.defaultDescription)
     }
-  })], 1)])])
+  })])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
